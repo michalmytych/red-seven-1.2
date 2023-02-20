@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from flask import jsonify
 from flask import Flask, redirect
 from flask import render_template
@@ -27,23 +29,17 @@ def get_servers():
     if server:
       servers_dump.append(server.serialize())
   return jsonify(servers_dump)
-
-
-@app.route('/api/servers/<server_key>/players', methods=['GET'])
-def get_players(server_key):
-  server = servers.get(server_key)
-  if not server:
-    return jsonify({"status": 404, "message": "Nie znaleziono serwera."})
-  return jsonify(server.players)
   
 
 @app.route('/servers/new-server', methods=['POST'])
 def new_server():
   server_key = request.form['server_key']
-  server = Server(server_key)
-  session['server_key'] = server.key
+  server = Server(server_key)    
   servers[server.key] = server
-  
+  player_id = uuid4()
+  server.players.append(player_id)
+  session['server_key'] = server.key
+  session['player_id'] = player_id
   return home()
 
 
@@ -52,5 +48,10 @@ def await_game(server_key):
   server = servers.get(server_key)
   if not server:
     return render_template('not_found.html')
+  player_id = session.get('player_id')
+  if player_id not in server.players:
+    player_id = uuid4()
+    session['player_id'] = player_id
+    server.players.append(player_id)
   return render_template('await_game.html', server=server)  
 

@@ -3,30 +3,15 @@
 <section>
   <div>
     <h4>Gracze</h4>
-    <div id="playersCounter">Aktualizowanie listy graczy...</div>
+    <p>Liczba oczekujących graczy: {{ server.players|length }}</p>
   </div>
-  <input id="serverIdHolder" type="hidden" value="{{ server.players|length }}">
 </section>
 
 <script>
-  const serverIdHolder = document.getElementById("serverIdHolder");  
-  const playersURL = `http://localhost:5000/api/servers/${serverIdHolder.value}/players`;
-  const playersCounter = document.getElementById("playersCounter");    
   const refreshRate = 2000;  
 
-  const fetchPlayers = () => {
-    fetch(playersURL)
-      .then((response) => response.json())
-      .then((data) => renderPlayersCounter(data));
-  }
-
-  const renderPlayersCounter = (players) => {  
-    const count = players.length ?? 0;
-    playersCounter.innerHTML = `<p>Graczy w grze: ${count}</p>`;
-  }
-
   window.onload = () => {
-    const interval = setInterval(() => fetchPlayers(), refreshRate);
+    const interval = setInterval(() => window.location.reload(), refreshRate);
 
     window.onbeforeunload = () => {
       clearInterval(interval);
