@@ -1,4 +1,5 @@
 from core.Game import Game
+from core.Logger import Logger
 
 class Server:
 
@@ -18,10 +19,12 @@ class Server:
   
   @property
   def players_joined(self):
+    Logger.log('INFO : All players have joined.')
     return self.game and all([player.joined for player in self.game.players])
 
-  def init_game(self):
+  def init_game(self):    
     self.game = Game(self.players_limit, self.players)
+    Logger.log('INFO : Game initizalized.')
 
   def get_player_by_id(self, player_id):
     for player in self.game.players:

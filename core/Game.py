@@ -4,6 +4,7 @@ from core.Canvas import Canvas
 from core.Deck import Deck
 from core.Player import Player
 from core.Turn import Turn
+from core.Logger import Logger
 
 
 class GameStatus(Enum):
@@ -34,6 +35,7 @@ class Game:
                 self.deck.deal_card_to_hand(player.hand)
             self.deck.deal_card_to_palette(player.palette)
         self.statuses.append(GameStatus.CARDS_DEALT)
+        Logger.log('INFO : Cards dealt.')
 
     def check_winner(self):
         winner_num = self.canvas.get_winner(self.players)
@@ -42,13 +44,6 @@ class Game:
     def check_player_counter(self):
         if self.player_counter >= len(self.players):
             self.player_counter = 0
-
-    def display_desk(self):
-        print(f'Canvas card: {self.canvas.card}')
-        print()
-        for num, player in enumerate(self.players):
-            print(f'{num + 1} player palette:')
-            print(f'{player.palette}')
 
     def check_active_players(self):
         active_players = 0
@@ -64,7 +59,7 @@ class Game:
     def run_player_turn(self, turn: Turn):
         search = [player for player in self.players if player.id == turn.player_id]
         if not len(search):
-            print('not len(search)')
+            Logger.log('TRUE : not len(search)')   
             return False
         player = search[0]
         if len(player.hand.cards) < 1:
@@ -73,32 +68,31 @@ class Game:
             player.run_turn(self.canvas, turn)
         self.post_turn_checks()
         if not player.active:
-            print('not player.active')
+            Logger.log('TRUE : not player.active')
             return False
         return True
 
     def post_turn_checks(self):
+        Logger.log('fx: post_turn_checks()')
         if self.check_winner() != self.player_counter:
-            print('self.check_winner() != self.player_counter')
+            Logger.log('TRUE : self.check_winner() != self.player_counter')
             self.players[self.player_counter].active = False
         self.winner = self.check_active_players()
         if self.winner:
-            print(f'self.winner: {self.players[self.winner].id}')
+            Logger.log(f'WINNER : self.winner: {self.players[self.winner].id}')
             self.statuses.append(GameStatus.ENDED)
+            return
         self.player_counter += 1
         self.check_player_counter()
 
     def prepare_lap(self):
-        print('Preparing lap')
+        Logger.log('INFO : Preparing lap')
         self.deal_cards()
         self.player_counter = self.check_winner() + 1
         self.check_player_counter()
         self.statuses.append(GameStatus.RUNNING_LAP)
-
-    def run_lap(self):
-        while True:
-            self.run_player_turn()
+        Logger.log('Lap prepared')
 
     @property
     def current_status(self):
-      return self.statuses[-1]
+        return self.statuses[-1]

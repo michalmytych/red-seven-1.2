@@ -25,16 +25,20 @@ class Player:
 
     def run_turn(self, canvas, turn: Turn):
         self.hand.sort()
+        Logger.log(f'INFO : Running turn for player {turn.player_id}.')
         Logger.log(turn.as_log())
         if len(turn.to_canvas):
+            Logger.log('TRUE : len(turn.to_canvas)')
             for card_number in turn.to_canvas:
               self.hand.set_card_to_canvas(card_number, canvas)              
-        if len(turn.to_canvas):
+        if len(turn.to_palette):
+            Logger.log('TRUE : len(turn.to_palette)')
             for card_number in turn.to_palette:
               self.hand.set_card_to_palette(card_number, self.palette)
         self.hand.filter()
         self.hand.sort()
         self.palette.sort()
+        Logger.log(f'INFO : Turn for player {turn.player_id} finished.')
 
     # def run_turn(self, game, player_number, canvas, turn):
     #     self.display_player_desk(game, player_number)

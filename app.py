@@ -80,7 +80,8 @@ def run_turn(server_key):
     request.form['to_canvas'],
     request.form['to_palette']
   )
-  run_completed = server.game.run_player_turn(turn)
+  server.game.run_player_turn(turn)
+  # run_completed = server.game.run_player_turn(turn)
   # if not run_completed:
   #   return 'Nie wykonano tury. Zrobiłeś coś źle!'
   return game(server_key)

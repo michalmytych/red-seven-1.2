@@ -4,17 +4,21 @@ from core.Card import Card
 class Canvas:
 
     RULES = {
-        6: 'Largest card.',
-        5: 'Max one value card',
-        4: 'Max one color card',
-        3: 'Max even value card',
-        2: 'Max different colors card',
-        1: 'Max order of card values',
-        0: 'Max card with value less then 4'
+      6: 'Najwyższa karta.',
+      5: 'Najwięcej kart o tym samym numerze',
+      4: 'Najwięcej kart o tym samym kolorze',
+      3: 'Najwięcej kart parzystych',
+      2: 'Najwięcej różnych kolorów',
+      1: 'Najwięcej kolejnych kart',
+      0: 'Najwięcej kart niższych od 4'
     }
 
     def __init__(self):
         self.card = Card(6, 'S')
+
+    @property
+    def rule_description(self):
+        return self.RULES.get(self.card.color)
 
     @staticmethod
     def get_winner_by_red_rule(palettes):

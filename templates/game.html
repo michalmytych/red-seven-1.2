@@ -11,6 +11,19 @@
   </div>
 {% endmacro -%}
 
+{% macro hidden_card_macro(card) -%}
+  <div style="
+    background-color: gray;
+    color: gray;
+    border: 3px solid gray;
+    border-radius: 2px;
+    margin: 3px;
+    width: fit-content;
+  ">
+    0
+  </div>
+{% endmacro -%}
+
 <div style="display: flex;">
   <div>
     <h1>[{{ server.key}}] Gra</h1>
@@ -26,7 +39,7 @@
 
 <hr>
 
-<div style="display: flex;">
+<div style="display: flex;">  
 
   <div>
     <h3>Karty przeciwników</h3>
@@ -36,7 +49,7 @@
         <h4>Ręka [{{ other_player.id }}]:</h4>
         <div style="display: flex;">
           {% for card in other_player.hand.cards %}
-            {{ card_macro(card) }}
+            {{ hidden_card_macro(card) }}
           {% endfor %}
         </div>
         <h4>Paleta [{{ other_player.id }}]:</h4>
@@ -52,10 +65,13 @@
     <div>
       <h4>Canvas:</h4>
       {{ card_macro(server.game.canvas.card) }}
+      {% if server.game %}
+        <p>{{ server.game.canvas.rule_description }}</p>
+      {% endif %}
       <h4>Deck:</h4>
       <div>
         {% for card in server.game.deck.cards %}
-          {{ card_macro(card) }}
+          {{ hidden_card_macro(card) }}
         {% endfor %}
       </div>
     </div>
