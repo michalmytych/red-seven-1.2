@@ -29,6 +29,14 @@ def get_servers():
   return jsonify(servers_dump)
 
 
+@app.route('/api/servers/<server_key>/players', methods=['GET'])
+def get_players(server_key):
+  server = servers.get(server_key)
+  if not server:
+    return jsonify({"status": 404, "message": "Nie znaleziono serwera."})
+  return jsonify(server.players)
+  
+
 @app.route('/servers/new-server', methods=['POST'])
 def new_server():
   server_key = request.form['server_key']
@@ -42,7 +50,7 @@ def new_server():
 @app.route('/servers/<server_key>/await-game', methods=['GET'])
 def await_game(server_key):
   server = servers.get(server_key)
-  if server:
-    return render_template('await_game.html', server=server)
-  return render_template('not_found.html')
+  if not server:
+    return render_template('not_found.html')
+  return render_template('await_game.html', server=server)  
 

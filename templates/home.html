@@ -39,8 +39,9 @@
 
     servers.forEach((server) => {
       serversCount++;
-      const status = server.active ? 'AKTYWNA' : 'NIEAKTYWNA';
-      const serverHTML = `<a href="${getServerURL(server.key)}">${server.key} : ${status}</a><br>`;
+      const status = server.active ? 'AKTYWNY' : 'NIEAKTYWNY';
+      const serverHTML = `<a href="${getServerURL(server.key)}">${server.key} : ${status} ` + 
+        `: ${server.players_count}/${server.players_limit} graczy</a><br>`;
       serversContainer.innerHTML = serversContainer.innerHTML + serverHTML;
     })
 
