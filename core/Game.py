@@ -64,27 +64,26 @@ class Game:
     def run_player_turn(self, turn: Turn):
         search = [player for player in self.players if player.id == turn.player_id]
         if not len(search):
+            print('not len(search)')
             return False
         player = search[0]
         if len(player.hand.cards) < 1:
             player.active = False
         if player.active:
-            player.run_turn(
-                self,
-                self.player_counter,
-                self.canvas,
-                turn
-            )
-        self.post_turn_checks(self)
+            player.run_turn(self.canvas, turn)
+        self.post_turn_checks()
         if not player.active:
+            print('not player.active')
             return False
         return True
 
     def post_turn_checks(self):
         if self.check_winner() != self.player_counter:
+            print('self.check_winner() != self.player_counter')
             self.players[self.player_counter].active = False
         self.winner = self.check_active_players()
         if self.winner:
+            print(f'self.winner: {self.players[self.winner].id}')
             self.statuses.append(GameStatus.ENDED)
         self.player_counter += 1
         self.check_player_counter()

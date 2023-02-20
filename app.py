@@ -75,15 +75,14 @@ def start_game(server_key):
 @app.route('/servers/<server_key>/game/run-turn', methods=['POST'])
 def run_turn(server_key):
   server = servers.get(server_key)
-  turn_data = request.form['turn']
   turn = Turn(
     session.get('player_id'),
-    turn_data['to_canvas'],
-    turn_data['to_palette']
+    request.form['to_canvas'],
+    request.form['to_palette']
   )
   run_completed = server.game.run_player_turn(turn)
-  if not run_completed:
-    return 'Nie wykonano tury. Zrobiłeś coś źle!'
+  # if not run_completed:
+  #   return 'Nie wykonano tury. Zrobiłeś coś źle!'
   return game(server_key)
 
 
@@ -108,8 +107,21 @@ def game(server_key):
       server.game.prepare_lap()
 
   other_players = server.get_other_players(client_id)
+  player.hand.sort()
 
   return render_template('game.html', server=server, player=player, other_players=other_players)  
+
+
+@app.route('/servers/<server_key>/game-won', methods=['GET'])
+def game_won(server_key):
+  server = servers.get(server_key)
+  return render_template('game_won.html')
+
+
+@app.route('/servers/<server_key>/game-lost', methods=['GET'])
+def game_lost(server_key):
+  server = servers.get(server_key)
+  return render_template('game_lost.html')
 
 
 if __name__ == '__main__':

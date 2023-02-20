@@ -72,24 +72,104 @@
         {% endfor %}
       </div>
       <h4>Ręka:</h4>
-      <div style="display: flex;">
+      <div id="players_hand" style="display: flex;">
         {% for card in player.hand.cards %}
           {{ loop.index - 1 }}{{ card_macro(card) }}
         {% endfor %}
       </div>
-      <div>
-        <form action="http://localhost:5000/servers/{{ server.key }}/game/run-turn">
-          <strong>Do canvasu:</strong><input type="text" id="to_canvas" name="to_canvas" placeholder="np. 0,3,5"/>
-          <br>
-          <strong>Do palety:</strong><input type="text" id="to_canvas" name="to_canvas" placeholder="np. 0,3,5"/>
-        </form>
-      </div>
+      {% if server.game.players[server.game.player_counter].id == session['player_id'] %}
+        <div>
+          <form method="POST" action="http://localhost:5000/servers/{{ server.key }}/game/run-turn">
+            <strong>Do canvasu:</strong><input type="text" id="to_canvas" name="to_canvas" placeholder="np. 0,3,5"/>
+            <br>
+            <strong>Do palety:</strong><input type="text" id="to_palette" name="to_palette" placeholder="np. 0,3,5"/>
+            <br>
+            <button type="submit">Zagraj</button>
+          </form>
+        </div>
+      {% endif %}
     </div>
     
   </div>
 
 </div>
 
+{% if server.game.winner %}
+  <script>
+    {% if server.game.players[server.game.winner].id == session['player_id'] %}
+      window.location.href = 'http://localhost:5000/servers/{{ server.key }}/game-won';
+    {% else %}
+      window.location.href = 'http://localhost:5000/servers/{{ server.key }}/game-lost';
+    {% endif %}
+  </script>
+{% endif %}
+
+{% if server.game.players[server.game.player_counter].id == session['player_id'] %}
+<script>
+  const toCanvas = document.getElementById('to_canvas');
+  const toPalette = document.getElementById('to_palette');
+  const playersHand = document.getElementById('players_hand');
+
+  const isInt = (str) => {
+    if (typeof str != "string") return false;
+    return !isNaN(str) && !isNaN(parseInt(str));
+  }
+
+  const error = () => {
+    alert('Niepoprawne numery kart!');
+    toCanvas.value = '';
+    toPalette.value = '';
+  }
+
+  const parseCardNumbers = (numbersString) => {
+    const handCardsCount = playersHand.childElementCount;
+    numbersString.replace(/\s/g, "");
+    const digits = numbersString.split(',');
+    digits.forEach(digit => {
+      if (!isInt(digit)) {
+        error();
+      }
+      const number = parseInt(digit);
+      if (number < 0 || number == 0 && handCardsCount == 0) {
+        error();
+      }
+      if (number > handCardsCount - 1) {
+        error();
+      }
+      return number;
+    });
+    return digits;
+  }
+
+  toCanvas.onchange = (e) => {
+    console.log('onchangeHandler');
+    let toCanvasNumbers = parseCardNumbers(e.target.value);
+    let toPaletteNumbers = [];
+    if (toPalette.value) {
+      toPaletteNumbers = parseCardNumbers(toPalette.value);
+    }    
+    const sameElement = toCanvasNumbers.some(n => toPaletteNumbers.includes(n));
+    if (sameElement) {
+      error();
+    }
+  };
+
+  toPalette.onchange = (e) => {
+    console.log('onchangeHandler');
+    let toPaletteNumbers = parseCardNumbers(e.target.value);
+    let toCanvasNumbers = [];
+    if (toCanvas.value) {
+      toCanvasNumbers = parseCardNumbers(toCanvas.value);
+    }    
+    const sameElement = toPaletteNumbers.some(n => toCanvasNumbers.includes(n));
+    if (sameElement) {
+      error();
+    }
+  };
+</script>
+{% endif %}
+
+{% if server.game.players[server.game.player_counter].id != session['player_id'] %}
 <script>
   const refreshRate = 2000;  
 
@@ -105,6 +185,8 @@
     }
   }
 </script>
+{% endif %}
+
 
 
 
