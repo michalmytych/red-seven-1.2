@@ -3,7 +3,7 @@
 <section>
   <div>
     <h4>Gracze</h4>
-    <p>Liczba oczekujących graczy: {{ server.players|length }}</p>
+    <p>Liczba oczekujących graczy: {{ server.players|length }}/{{ server.players_limit }}</p>
     {% if server.players|length >= 2 and server.host_id == session['player_id'] %}
       <form method="POST" action="http://localhost:5000/servers/{{ server.key}}/start-game">
         <input type="submit" value="Rozpocznij grę"/>
@@ -11,9 +11,6 @@
     {% endif %}
   </div>
 </section>
-
-<div>server.is_active : {{ server.is_active }} </div>
-<div>server.host_id != session['player_id'] : {{ server.host_id != session['player_id'] }} </div>
 
 {% if server.is_active and server.host_id != session['player_id'] %}
 <script>
