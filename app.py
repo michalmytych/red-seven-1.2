@@ -53,6 +53,7 @@ def await_game(server_key):
   player_id = session.get('player_id')
   if player_id not in server.players:
     if player_id != server.host_id:
+      session['server_key'] = server.key
       player_id = uuid4()
       session['player_id'] = player_id
     server.players.append(player_id)

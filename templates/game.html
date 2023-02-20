@@ -5,19 +5,24 @@
     border: 3px solid {{ card.css_bg_color }};
     border-radius: 2px;
     margin: 3px;
+    width: fit-content;
   ">
     {{ card.value }}
   </div>
 {% endmacro -%}
 
-
-<h1>[{{ server.key}}] Gra</h1>
-<em>[server_obj_id: {{ server.obj_id }}]</em><br>
-<em>[game_obj_id: {{ server.game.obj_id }}]</em><br>
-
-<p>Serwer: {{ session['server_key'] }}</p>
-<p>Gracz: {{ session['player_id'] }}</p>
-<p><strong>Aktualnie zagrywa:</strong> {{ server.game.players[server.game.player_counter].id }}</p>
+<div style="display: flex;">
+  <div>
+    <h1>[{{ server.key}}] Gra</h1>
+    <em>[server_obj_id: {{ server.obj_id }}]</em><br>
+    <em>[game_obj_id: {{ server.game.obj_id }}]</em><br>
+  </div>
+  <div>
+    <p>Serwer: {{ session['server_key'] }}</p>
+    <p>Gracz: {{ session['player_id'] }}</p>
+    <p><strong>Aktualnie zagrywa:</strong> {{ server.game.players[server.game.player_counter].id }}</p>
+  </div>
+</div>
 
 <hr>
 
@@ -42,6 +47,18 @@
         </div>
       </div>
     {% endfor %}
+
+    <h3>Plansza</h3>
+    <div>
+      <h4>Canvas:</h4>
+      {{ card_macro(server.game.canvas.card) }}
+      <h4>Deck:</h4>
+      <div>
+        {% for card in server.game.deck.cards %}
+          {{ card_macro(card) }}
+        {% endfor %}
+      </div>
+    </div>
   </div>
 
   <div>
@@ -57,14 +74,21 @@
       <h4>Ręka:</h4>
       <div style="display: flex;">
         {% for card in player.hand.cards %}
-          {{ card_macro(card) }}
+          {{ loop.index - 1 }}{{ card_macro(card) }}
         {% endfor %}
       </div>
+      <div>
+        <form action="http://localhost:5000/servers/{{ server.key }}/game/run-turn">
+          <strong>Do canvasu:</strong><input type="text" id="to_canvas" name="to_canvas" placeholder="np. 0,3,5"/>
+          <br>
+          <strong>Do palety:</strong><input type="text" id="to_canvas" name="to_canvas" placeholder="np. 0,3,5"/>
+        </form>
+      </div>
     </div>
+    
   </div>
 
 </div>
-
 
 <script>
   const refreshRate = 2000;  
