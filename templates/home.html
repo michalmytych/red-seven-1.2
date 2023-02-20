@@ -5,7 +5,7 @@
   
   <div>
     <h2>Stwórz grę</h2>
-    <form method="POST" action="http://localhost:5000/new-server">
+    <form method="POST" action="http://localhost:5000/servers/new-server">
       <input type="text" name="server_key" placeholder="Nazwa serwera" value="{{ request.form['server_key'] }}"/>
       <input type="submit" value="Stwórz"/>
     </form>
@@ -25,7 +25,7 @@
   const serversContainer = document.getElementById("serversContainer");  
   const refreshRate = 2000;  
 
-  const getServerURL = (serverKey) => `http://localhost:5000/servers/${serverKey}`;
+  const getServerURL = (serverKey) => `http://localhost:5000/servers/${serverKey}/await-game`;
 
   const fetchServers = () => {
     fetch(serversURL)

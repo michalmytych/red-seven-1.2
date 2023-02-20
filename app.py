@@ -14,6 +14,11 @@ app.secret_key = 'SECRET KEY'
 
 servers = {}
 
+@app.route('/', methods=['GET'])
+def home():
+  return render_template('home.html')
+
+
 @app.route('/api/servers', methods=['GET'])
 def get_servers():
   servers_dump = []
@@ -24,7 +29,7 @@ def get_servers():
   return jsonify(servers_dump)
 
 
-@app.route('/new-server', methods=['POST'])
+@app.route('/servers/new-server', methods=['POST'])
 def new_server():
   server_key = request.form['server_key']
   server = Server(server_key)
@@ -34,6 +39,10 @@ def new_server():
   return home()
 
 
-@app.route('/', methods=['GET'])
-def home():
-  return render_template('home.html')
+@app.route('/servers/<server_key>/await-game', methods=['GET'])
+def await_game(server_key):
+  server = servers.get(server_key)
+  if server:
+    return render_template('await_game.html', server=server)
+  return render_template('not_found.html')
+
