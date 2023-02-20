@@ -1,6 +1,6 @@
-from Canvas import Canvas
-from Deck import Deck
-from Player import Player
+from core.Canvas import Canvas
+from core.Deck import Deck
+from core.Player import Player
 
 
 class Game:
@@ -44,7 +44,10 @@ class Game:
         return winner
 
     def run_lap(self):
+        # rozdaj karty
         self.deal_cards()
+        # sprawdzenie reguł po rozegraniu kart przez wszystkich graczy
+        # Tutaj chyba wywali bład jak nie znajdzie gracza ????
         self.player_counter = self.check_winner() + 1
         self.check_player_counter()
         while True:

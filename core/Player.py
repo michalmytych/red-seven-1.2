@@ -1,5 +1,5 @@
-from Hand import Hand
-from Palette import Palette
+from core.Hand import Hand
+from core.Palette import Palette
 
 
 class Player:

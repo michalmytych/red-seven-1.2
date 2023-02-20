@@ -1,5 +1,5 @@
 from collections import Counter
-from Card import Card
+from core.Card import Card
 
 
 class Palette:

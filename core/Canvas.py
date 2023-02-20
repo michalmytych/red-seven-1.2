@@ -1,4 +1,4 @@
-from Card import Card
+from core.Card import Card
 
 
 class Canvas:
