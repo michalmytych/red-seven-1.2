@@ -34,9 +34,9 @@ def get_servers():
 @app.route('/servers/new-server', methods=['POST'])
 def new_server():
   server_key = request.form['server_key']
-  server = Server(server_key)    
-  servers[server.key] = server
   player_id = uuid4()
+  server = Server(server_key, player_id)    
+  servers[server.key] = server  
   server.players.append(player_id)
   session['server_key'] = server.key
   session['player_id'] = player_id
@@ -55,3 +55,22 @@ def await_game(server_key):
     server.players.append(player_id)
   return render_template('await_game.html', server=server)  
 
+
+@app.route('/servers/<server_key>/start-game', methods=['POST'])
+def start_game(server_key):
+  server = servers.get(server_key)
+  if not server:
+    return render_template('not_found.html')
+  player_id = session.get('player_id')
+  if player_id != server.host_id:
+    return render_template('not_permitted.html')
+  server.init_game()
+  return game(server_key)  
+
+
+@app.route('/servers/<server_key>/game', methods=['GET'])
+def game(server_key):
+  server = servers.get(server_key)
+  if not server:
+    return render_template('not_found.html')
+  return render_template('game.html', server=server)  

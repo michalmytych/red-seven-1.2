@@ -1,11 +1,26 @@
-<h1>Oczekiwanie na rozgrywkę</h1>
+<h1>[{{ server.key}}] Oczekiwanie na rozgrywkę</h1>
 
 <section>
   <div>
     <h4>Gracze</h4>
     <p>Liczba oczekujących graczy: {{ server.players|length }}</p>
+    {% if server.players|length >= 2 and server.host_id == session['player_id'] %}
+      <form method="POST" action="http://localhost:5000/servers/{{ server.key}}/start-game">
+        <input type="submit" value="Rozpocznij grę"/>
+      </form>
+    {% endif %}
   </div>
 </section>
+
+<div>server.is_active : {{ server.is_active }} </div>
+<div>server.host_id != session['player_id'] : {{ server.host_id != session['player_id'] }} </div>
+
+{% if server.is_active and server.host_id != session['player_id'] %}
+<script>
+  window.location.href = 'http://localhost:5000/servers/{{ server.key}}/game'
+</script>
+{% endif %}
+
 
 <script>
   const refreshRate = 2000;  
@@ -17,5 +32,4 @@
       clearInterval(interval);
     }
   }
-  
 </script>

@@ -5,8 +5,10 @@ from core.Player import Player
 
 class Game:
 
-    def __init__(self, number_of_players):
-        self.players = [Player() for _ in range(number_of_players)]
+    def __init__(self, number_of_players, players_ids):
+        if len(players_ids) != number_of_players:
+          raise Exception('Liczba graczy jest inna niż wymagana!')
+        self.players = [Player(_) for _ in players_ids]
         self.deck = Deck()
         self.canvas = Canvas()
         self.player_counter = 0

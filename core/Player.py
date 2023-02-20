@@ -4,7 +4,8 @@ from core.Palette import Palette
 
 class Player:
 
-    def __init__(self):
+    def __init__(self, _id = None):
+        self.id = _id
         self.hand = Hand()
         self.palette = Palette()
         self.active = True
