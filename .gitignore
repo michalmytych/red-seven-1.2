@@ -132,3 +132,4 @@ dmypy.json
 /core/__pycache__/
 /__pycache__/
 /.idea
+.DS_store
