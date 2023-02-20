@@ -5,10 +5,14 @@ from core.Palette import Palette
 class Player:
 
     def __init__(self, _id = None):
+        # @todo rm
+        self.obj_id = id(self)
+        # @todo rm
         self.id = _id
         self.hand = Hand()
         self.palette = Palette()
         self.active = True
+        self.joined = False
 
     def set_card_to_canvas(self, index, canvas):
         self.hand.set_card_to_canvas(index, canvas)
@@ -25,7 +29,7 @@ class Player:
         for num, card in enumerate(self.hand.cards):
             print(f'{num + 1}: {card}')
 
-    def run_turn(self, game, player_number, canvas):
+    def run_turn(self, game, player_number, canvas, turn):
         self.display_player_desk(game, player_number)
         answer = input('Do you want set card to canvas(y/n): ')
         if answer.lower() == 'y':

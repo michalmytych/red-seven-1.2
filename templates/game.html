@@ -1,5 +1,87 @@
+{% macro card_macro(card) -%}
+  <div style="
+    background-color: {{ card.css_bg_color }};
+    color: {{ card.css_text_color }};
+    border: 3px solid {{ card.css_bg_color }};
+    border-radius: 2px;
+    margin: 3px;
+  ">
+    {{ card.value }}
+  </div>
+{% endmacro -%}
+
+
 <h1>[{{ server.key}}] Gra</h1>
+<em>[server_obj_id: {{ server.obj_id }}]</em><br>
+<em>[game_obj_id: {{ server.game.obj_id }}]</em><br>
+
 <p>Serwer: {{ session['server_key'] }}</p>
 <p>Gracz: {{ session['player_id'] }}</p>
+<p><strong>Aktualnie zagrywa:</strong> {{ server.game.players[server.game.player_counter].id }}</p>
+
+<hr>
+
+<div style="display: flex;">
+
+  <div>
+    <h3>Karty przeciwników</h3>
+    {% for other_player in other_players %}
+      <em>[obj_id: {{ other_player.obj_id }}]</em><br>
+      <div>
+        <h4>Ręka [{{ other_player.id }}]:</h4>
+        <div style="display: flex;">
+          {% for card in other_player.hand.cards %}
+            {{ card_macro(card) }}
+          {% endfor %}
+        </div>
+        <h4>Paleta [{{ other_player.id }}]:</h4>
+        <div style="display: flex;">
+          {% for card in other_player.palette.cards %}
+            {{ card_macro(card) }}
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div>
+    <h3>Twoje karty</h3>
+    <em>[obj_id: {{ player.obj_id }}]</em><br>
+    <div>
+      <h4>Paleta:</h4>
+      <div style="display: flex;">
+        {% for card in player.palette.cards %}
+          {{ card_macro(card) }}
+        {% endfor %}
+      </div>
+      <h4>Ręka:</h4>
+      <div style="display: flex;">
+        {% for card in player.hand.cards %}
+          {{ card_macro(card) }}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+  const refreshRate = 2000;  
+
+  function refreshGame() {
+    window.location.href = 'http://localhost:5000/servers/{{ server.key }}/game';
+  }
+
+  window.onload = () => {
+    const interval = setInterval(() => refreshGame(), refreshRate);
+
+    window.onbeforeunload = () => {
+      clearInterval(interval);
+    }
+  }
+</script>
+
+
 
 

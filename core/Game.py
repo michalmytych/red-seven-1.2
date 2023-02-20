@@ -1,23 +1,39 @@
+from enum import Enum
+
 from core.Canvas import Canvas
 from core.Deck import Deck
 from core.Player import Player
+from core.Turn import Turn
 
 
-class Game:
+class GameStatus(Enum):
+    INITALIZED = 0
+    CARDS_DEALT = 1
+    RUNNING_LAP = 2
+    ENDED = 3
+
+
+class Game:    
 
     def __init__(self, number_of_players, players_ids):
+        # @todo rm
+        self.obj_id = id(self)
+        # @todo rm
         if len(players_ids) != number_of_players:
           raise Exception('Liczba graczy jest inna niż wymagana!')
         self.players = [Player(_) for _ in players_ids]
         self.deck = Deck()
         self.canvas = Canvas()
         self.player_counter = 0
+        self.winner = None
+        self.statuses = [GameStatus.INITALIZED]
 
     def deal_cards(self):
         for player in self.players:
-            for i in range(7):
+            for _ in range(7):
                 self.deck.deal_card_to_hand(player.hand)
             self.deck.deal_card_to_palette(player.palette)
+        self.statuses.append(GameStatus.CARDS_DEALT)
 
     def check_winner(self):
         winner_num = self.canvas.get_winner(self.players)
@@ -45,27 +61,45 @@ class Game:
             return None
         return winner
 
-    def run_lap(self):
-        # rozdaj karty
+    def run_player_turn(self, turn: Turn):
+        search = [player for player in self.players if player.id == turn.player_id]
+        if not len(search):
+            return False
+        player = search[0]
+        if len(player.hand.cards) < 1:
+            player.active = False
+        if player.active:
+            player.run_turn(
+                self,
+                self.player_counter,
+                self.canvas,
+                turn
+            )
+        self.post_turn_checks(self)
+        if not player.active:
+            return False
+        return True
+
+    def post_turn_checks(self):
+        if self.check_winner() != self.player_counter:
+            self.players[self.player_counter].active = False
+        self.winner = self.check_active_players()
+        if self.winner:
+            self.statuses.append(GameStatus.ENDED)
+        self.player_counter += 1
+        self.check_player_counter()
+
+    def prepare_lap(self):
+        print('Preparing lap')
         self.deal_cards()
-        # sprawdzenie reguł po rozegraniu kart przez wszystkich graczy
-        # Tutaj chyba wywali bład jak nie znajdzie gracza ????
         self.player_counter = self.check_winner() + 1
         self.check_player_counter()
+        self.statuses.append(GameStatus.RUNNING_LAP)
+
+    def run_lap(self):
         while True:
-            if len(self.players[self.player_counter].hand.cards) < 1:
-                self.players[self.player_counter].active = False
-            if self.players[self.player_counter].active:
-                self.players[self.player_counter].run_turn(
-                    self,
-                    self.player_counter,
-                    self.canvas
-                )
-            if self.check_winner() != self.player_counter:
-                self.players[self.player_counter].active = False
-            winner = self.check_active_players()
-            if winner:
-                print(f'Lap ends, winner is: {winner} player')
-                break
-            self.player_counter += 1
-            self.check_player_counter()
+            self.run_player_turn()
+
+    @property
+    def current_status(self):
+      return self.statuses[-1]

@@ -4,6 +4,8 @@
   <div>
     <h4>Gracze</h4>
     <p>Liczba oczekujących graczy: {{ server.players|length }}/{{ server.players_limit }}</p>
+    <p>server.players|length : {{ server.players|length }}</p>
+    <p>server.host_id == session['player_id'] : {{ server.host_id == session['player_id'] }}</p>
     {% if server.players|length >= 2 and server.host_id == session['player_id'] %}
       <form method="POST" action="http://localhost:5000/servers/{{ server.key}}/start-game">
         <input type="submit" value="Rozpocznij grę"/>
@@ -17,7 +19,6 @@
   window.location.href = 'http://localhost:5000/servers/{{ server.key}}/game'
 </script>
 {% endif %}
-
 
 <script>
   const refreshRate = 2000;  
