@@ -1,0 +1,38 @@
+<h1>[{{ server.key}}] Oczekiwanie na rozgrywkę</h1>
+
+<section>
+  <div>
+    <h4>Gracze</h4>
+    <p>Liczba oczekujących graczy: {{ server.players|length }}/{{ server.players_limit }}</p>
+    
+    <p>server.game.obj_id : {{ server.game.obj_id }}</p>
+    <p>server.host_id : {{ server.host_id }}</p>
+    <p>session['player_id'] : {{ session['player_id'] }}</p>
+    <p>server.players|length : {{ server.players|length }}</p>
+    <p>server.host_id == session['player_id'] : {{ server.host_id == session['player_id'] }}</p>
+    
+    {% if server.players|length >= 2 and server.host_id == session['player_id'] %}
+      <form method="POST" action="{{ url_for('start_game', server_key=server.key) }}">
+        <input type="submit" value="Rozpocznij grę"/>
+      </form>
+    {% endif %}
+  </div>
+</section>
+
+{% if server.is_active and server.host_id != session['player_id'] %}
+<script>
+  window.location.href = "{{ url_for('game', server_key=server.key) }}"
+</script>
+{% endif %}
+
+<script>
+  const refreshRate = 2000;  
+
+  window.onload = () => {
+    const interval = setInterval(() => window.location.reload(), refreshRate);
+
+    window.onbeforeunload = () => {
+      clearInterval(interval);
+    }
+  }
+</script>

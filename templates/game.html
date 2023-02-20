@@ -1,0 +1,211 @@
+{% macro card_macro(card) -%}
+  <div style="
+    background-color: {{ card.css_bg_color }};
+    color: {{ card.css_text_color }};
+    border: 3px solid {{ card.css_bg_color }};
+    border-radius: 2px;
+    margin: 3px;
+    width: fit-content;
+  ">
+    {{ card.value }}
+  </div>
+{% endmacro -%}
+
+{% macro hidden_card_macro(card) -%}
+  <div style="
+    background-color: gray;
+    color: gray;
+    border: 3px solid gray;
+    border-radius: 2px;
+    margin: 3px;
+    width: fit-content;
+  ">
+    0
+  </div>
+{% endmacro -%}
+
+<div style="display: flex;">
+  <div>
+    <h1>[{{ server.key}}] Gra</h1>
+    <em>[server_obj_id: {{ server.obj_id }}]</em><br>
+    <em>[game_obj_id: {{ server.game.obj_id }}]</em><br>
+  </div>
+  <div>
+    <p>Serwer: {{ session['server_key'] }}</p>
+    <p>Gracz: {{ session['player_id'] }}</p>
+    <p><strong>Aktualnie zagrywa:</strong> {{ server.game.players[server.game.player_counter].id }}</p>
+  </div>
+</div>
+
+<hr>
+
+<div style="display: flex;">  
+
+  <div>
+    <h3>Karty przeciwników</h3>
+    {% for other_player in other_players %}
+      <em>[obj_id: {{ other_player.obj_id }}]</em><br>
+      <div>
+        <h4>Ręka [{{ other_player.id }}]:</h4>
+        <div style="display: flex;">
+          {% for card in other_player.hand.cards %}
+            {{ hidden_card_macro(card) }}
+          {% endfor %}
+        </div>
+        <h4>Paleta [{{ other_player.id }}]:</h4>
+        <div style="display: flex;">
+          {% for card in other_player.palette.cards %}
+            {{ card_macro(card) }}
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+
+    <h3>Plansza</h3>
+    <div>
+      <h4>Canvas:</h4>
+      {{ card_macro(server.game.canvas.card) }}
+      {% if server.game %}
+        <p>{{ server.game.canvas.rule_description }}</p>
+      {% endif %}
+      <h4>Deck:</h4>
+      <div>
+        {% for card in server.game.deck.cards %}
+          {{ hidden_card_macro(card) }}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <h3>Twoje karty</h3>
+    <em>[obj_id: {{ player.obj_id }}]</em><br>
+    <div>
+      <h4>Paleta:</h4>
+      <div style="display: flex;">
+        {% for card in player.palette.cards %}
+          {{ card_macro(card) }}
+        {% endfor %}
+      </div>
+      <h4>Ręka:</h4>
+      <div id="players_hand" style="display: flex;">
+        {% for card in player.hand.cards %}
+          {{ loop.index - 1 }}{{ card_macro(card) }}
+        {% endfor %}
+      </div>
+      {% if server.game.players[server.game.player_counter].id == session['player_id'] %}
+        <div>
+          <form method="POST" action="{{ url_for('run_turn', server_key=server.key) }}">
+            <strong>Do canvasu:</strong><input type="text" id="to_canvas" name="to_canvas" placeholder="np. 0,3,5"/>
+            <br>
+            <strong>Do palety:</strong><input type="text" id="to_palette" name="to_palette" placeholder="np. 0,3,5"/>
+            <br>
+            <button type="submit">Zagraj</button>
+          </form>
+        </div>
+      {% endif %}
+    </div>
+    
+  </div>
+
+</div>
+
+{% if server.game.winner %}
+  <script>
+    {% if server.game.winner < server.game.players|length %}
+      {% if server.game.players[server.game.winner].id == session['player_id'] %}
+        window.location.href = "{{ url_for('game_won', server_key=server.key) }}";
+      {% else %}
+        window.location.href = "{{ url_for('start_lost', server_key=server.key) }}";
+      {% endif %}
+    {% endif %}
+  </script>
+{% endif %}
+
+{% if server.game.players[server.game.player_counter].id == session['player_id'] %}
+<script>
+  const toCanvas = document.getElementById('to_canvas');
+  const toPalette = document.getElementById('to_palette');
+  const playersHand = document.getElementById('players_hand');
+
+  const isInt = (str) => {
+    if (typeof str != "string") return false;
+    return !isNaN(str) && !isNaN(parseInt(str));
+  }
+
+  const error = () => {
+    alert('Niepoprawne numery kart!');
+    toCanvas.value = '';
+    toPalette.value = '';
+  }
+
+  const parseCardNumbers = (numbersString) => {
+    const handCardsCount = playersHand.childElementCount;
+    numbersString.replace(/\s/g, "");
+    const digits = numbersString.split(',');
+    digits.forEach(digit => {
+      if (!isInt(digit)) {
+        error();
+      }
+      const number = parseInt(digit);
+      if (number < 0 || number == 0 && handCardsCount == 0) {
+        error();
+      }
+      if (number > handCardsCount - 1) {
+        error();
+      }
+      return number;
+    });
+    return digits;
+  }
+
+  toCanvas.onchange = (e) => {
+    console.log('onchangeHandler');
+    let toCanvasNumbers = parseCardNumbers(e.target.value);
+    let toPaletteNumbers = [];
+    if (toPalette.value) {
+      toPaletteNumbers = parseCardNumbers(toPalette.value);
+    }    
+    const sameElement = toCanvasNumbers.some(n => toPaletteNumbers.includes(n));
+    if (sameElement) {
+      error();
+    }
+  };
+
+  toPalette.onchange = (e) => {
+    console.log('onchangeHandler');
+    let toPaletteNumbers = parseCardNumbers(e.target.value);
+    let toCanvasNumbers = [];
+    if (toCanvas.value) {
+      toCanvasNumbers = parseCardNumbers(toCanvas.value);
+    }    
+    const sameElement = toPaletteNumbers.some(n => toCanvasNumbers.includes(n));
+    if (sameElement) {
+      error();
+    }
+  };
+</script>
+{% endif %}
+
+{% if server.game.players[server.game.player_counter].id != session['player_id'] %}
+<script>
+  const refreshRate = 2000;  
+
+  function refreshGame() {
+    window.location.href = "{{ url_for('game', server_key=server.key) }}";
+  }
+
+  window.onload = () => {
+    const interval = setInterval(() => refreshGame(), refreshRate);
+
+    window.onbeforeunload = () => {
+      clearInterval(interval);
+    }
+  }
+</script>
+{% endif %}
+
+
+
+
+

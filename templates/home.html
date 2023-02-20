@@ -1,0 +1,60 @@
+<h1>RedSeven</h1>
+<small>wersja 1.2</small>
+
+<section>
+  
+  <div>
+    <h2>Stwórz grę</h2>
+    <form method="POST" action="{{ url_for('new_server') }}">
+      <input type="text" name="server_key" placeholder="Nazwa serwera" value="{{ request.form['server_key'] }}"/>
+      <input type="submit" value="Stwórz"/>
+    </form>
+  </div>
+  
+  <strong>lub</strong>
+
+  <div>
+    <h2>Wybierz serwer</h2>
+    <div id="serversContainer"></div>
+  </div>
+  
+</section>
+
+<script>
+  const serversURL = "{{ url_for('get_servers') }}";
+  const serversContainer = document.getElementById("serversContainer");  
+  const refreshRate = 2000;  
+
+  const getServerURL = (serverKey) => `${window.location.origin}/servers/${serverKey}/await-game`;
+
+  const fetchServers = () => {
+    fetch(serversURL)
+      .then((response) => response.json())
+      .then((data) => renderServersContainer(data));
+  }
+
+  const renderServersContainer = (servers) => {
+    serversContainer.innerHTML = '';
+    let serversCount = 0;
+
+    servers.forEach((server) => {
+      serversCount++;
+      const status = server.active ? 'AKTYWNY' : 'NIEAKTYWNY';
+      const serverHTML = `<a href="${getServerURL(server.key)}">${server.key} : ${status} ` + 
+        `: ${server.players_count}/${server.players_limit} graczy</a><br>`;
+      serversContainer.innerHTML = serversContainer.innerHTML + serverHTML;
+    })
+
+    const counterHTML = `<p>${serversCount} serwerów gry</p>`;
+    serversContainer.innerHTML = serversContainer.innerHTML + counterHTML
+  }
+
+  window.onload = () => {
+    const interval = setInterval(() => fetchServers(), refreshRate);
+
+    window.onbeforeunload = () => {
+      clearInterval(interval);
+    }
+  }
+  
+</script>
