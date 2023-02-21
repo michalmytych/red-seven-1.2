@@ -1,8 +1,16 @@
+from enum import Enum
 from core.exceptions import IllegalPlayerActionException
 from core.canvas import Canvas
 from core.deck import Deck
 from core.player import Player
 from core.turn import Turn
+
+
+class Status(Enum):
+    INITALIZED = 0
+    ROUND_PREPARED = 1
+    RUNNING_LAP = 2
+    ENDED = 3
 
 
 class Game:
@@ -12,6 +20,7 @@ class Game:
         self.canvas = Canvas()
         self.player_counter = 0
         self.winner = None
+        self.statuses = [Status.INITALIZED]
 
     def deal_cards(self):
         """ Rozdaj karty graczom i rozpocznij ich palety. """
@@ -19,6 +28,7 @@ class Game:
             for i in range(7):
                 self.deck.deal_card_to_hand(player.hand)
             self.deck.deal_card_to_palette(player.palette)
+        self.statuses.append(Status.ROUND_PREPARED)
 
     def get_winner_index(self):
         """ Wyznacz indeks zwycięzcy na podstawie obowiązującej reguły. """
@@ -45,7 +55,15 @@ class Game:
         if turn.player_id != current_player.id:
             raise IllegalPlayerActionException
 
+    def prepare_round(self):
+        self.deal_cards()
+        self.player_counter = self.get_winner_index() + 1
+        self.adjust_player_counter()
+
     def run_turn(self, turn: Turn):
+        # Ustaw status jako: zagywanie kolejki
+        self.statuses.append(Status.RUNNING_LAP)
+
         # Pobierz referencję do aktualnego gracza
         current_player = self.players[self.player_counter]
 
@@ -68,6 +86,7 @@ class Game:
         _winner = self.get_winner_if_exists()
         if _winner:
             self.winner = _winner
+            self.statuses.append(Status.ENDED)
             return _winner
 
         # Ustaw następnego gracza jako zagrywającego
@@ -76,10 +95,3 @@ class Game:
 
         # Jeśli nie ma zwycięzcy, zwróć None
         return None
-
-    def prepare_round(self):
-        self.deal_cards()
-        self.player_counter = self.get_winner_index() + 1               # Potrzebne do wyznaczenia 1 zagrywającego.
-        self.adjust_player_counter()                                    # Tak jak powyżej, jeśli jest dwóch graczy i
-                                                                        # wyjdzie ix 2 to trzeba go naprawić na 1.
-
