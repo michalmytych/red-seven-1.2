@@ -1,0 +1,2 @@
+class IllegalPlayerActionException(Exception):
+    pass

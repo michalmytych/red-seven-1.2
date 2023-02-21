@@ -1,3 +1,4 @@
+from core.exceptions import IllegalPlayerActionException
 from core.canvas import Canvas
 from core.deck import Deck
 from core.player import Player
@@ -5,7 +6,6 @@ from core.turn import Turn
 
 
 class Game:
-
     def __init__(self, players_ids):
         self.players = [Player(_id) for _id in range(players_ids)]
         self.deck = Deck()
@@ -41,18 +41,20 @@ class Game:
             return None
         return winner
 
+    def validate_turn(self, turn: Turn, current_player: Player):
+        if turn.player_id != current_player.id:
+            raise IllegalPlayerActionException
+
     def run_turn(self, turn: Turn):
         current_player = self.players[self.player_counter]
+
+        self.validate_turn(turn, current_player)
 
         if len(current_player.hand.cards) < 1:
             current_player.active = False
 
         if current_player.active:
-            current_player.play_turn(
-              self,
-              self.player_counter,
-              self.canvas
-            )
+            current_player.play_turn(turn, self.canvas)
 
         if self.get_winner_index() != self.player_counter:
             current_player.active = False
