@@ -1,0 +1,2 @@
+PLAYERS_LIMIT = 2
+

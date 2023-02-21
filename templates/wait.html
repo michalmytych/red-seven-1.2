@@ -1,0 +1,15 @@
+<h3>Oczekiwanie na rozgrywkę w {{ session['game'] }}</h3>
+
+<script>
+  const refreshRate = 2000;
+
+  window.onload = () => {
+    const interval = setInterval(() => window.location.reload(), refreshRate);
+
+    window.onbeforeunload = () => {
+      clearInterval(interval);
+    }
+  }
+</script>
+
+
