@@ -15,7 +15,7 @@ def test_run_full_game():
     assert len(game.players) == PLAYERS_LIMIT
     assert all([len(p.hand.cards) == 7 for p in game.players])
     assert all([len(p.palette.cards) == 1 for p in game.players])
-    assert game.canvas.card.value == 'START'
+    assert game.canvas.card.value == 'S'
 
     old_player_ix = game.player_counter
     current_player = game.players[game.player_counter]

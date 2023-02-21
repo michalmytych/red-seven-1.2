@@ -1,0 +1,73 @@
+<code style="width: 100%; height: 5rem; font-size: 0.8rem; color: white; background-color: black;">
+  Sesja [nickname]: {{ session.get('nickname') }}
+  <br>
+  Sesja [game]: {{ session.get('game') }}
+  <br>
+  player[id]: {{ player.id }}
+  <br>
+  game.current_player[id]: {{ game.current_player.id }}
+</code><br>
+
+{% for _player in game.players %}
+
+  {% if _player == player %}
+    <h4>Twoje karty [{{ _player.id }}]</h4>
+  {% else %}
+    <h4>Karty gracza [{{ _player.id }}]</h4>
+  {% endif %}
+
+  <strong>Ręka</strong>
+  <div class="cardsContainer">
+    {% for card in _player.hand.cards %}
+      {% if player == _player %}
+        <div class="card" style="border-color: {{ card.css_color }};">{{ card.value }}</div>
+      {% else %}
+        <div class="hiddenCard">0</div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <strong>Paleta</strong>
+  <div class="cardsContainer">
+    {% for card in _player.palette.cards %}
+      <div
+        class="card"
+        style="border-color: {{ card.css_color }};
+          color: {{ card.css_color }};"
+      >
+        {{ card.value }}
+      </div>
+    {% endfor %}
+  </div>
+
+  <hr>
+{% endfor %}
+
+<h3>Tło</h3>
+<div
+  class="card"
+  style="border-color: {{ game.canvas.card.css_color }}; color: {{ game.canvas.card.css_color }};"
+>
+  {{ game.canvas.card.value }}
+</div>
+
+
+<style>
+  .cardsContainer {
+    display: flex;
+  }
+
+  .card, .hiddenCard {
+    width: fit-content;
+    border-radius: 8px;
+    border: solid 5px;
+    font-size: 0.9rem;
+    margin: 5px;
+  }
+
+  .hiddenCard {
+    background-color: gray;
+    color: gray;
+    border-color: gray;
+  }
+</style>

@@ -1,12 +1,12 @@
 class Card:
     DICT_OF_COLORS = {
-      6: 'RED',
-      5: 'ORANGE',
-      4: 'YELLOW',
-      3: 'GREEN',
-      2: 'LIGHTBLUE',
-      1: 'DEEP_BLUE',
-      0: 'VIOLET'
+      6: 'red',
+      5: 'orange',
+      4: 'golden',
+      3: 'green',
+      2: 'lightblue',
+      1: 'navy',
+      0: 'violet'
     }
     LIST_OF_VALUES = [1, 2, 3, 4, 5, 6, 7]
 
@@ -17,3 +17,8 @@ class Card:
     def __str__(self):
         from core.canvas import Canvas
         return f'{Card.DICT_OF_COLORS[self.color]} {self.value} Rule: {Canvas.RULES[self.color]}'
+
+    @property
+    def css_color(self):
+        return self.DICT_OF_COLORS.get(self.color)
+

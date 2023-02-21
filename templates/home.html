@@ -2,9 +2,9 @@
   <h1>Wejdź do gry!</h1>
   <hr>
   <form class="fm" method="POST" action="{{ url_for('home') }}">
-    <input class="ipt" name="game" type="text" required placeholder="Gra" minlength="5">
+    <input class="ipt" name="game" type="text" required placeholder="Gra" minlength="5" value="ruska">
     <br>
-    <input class="ipt" name="nickname" type="text" required placeholder="Nickname" minlength="5">
+    <input class="ipt" name="nickname" type="text" required placeholder="Nickname" minlength="5" value="stefanBatory">
     <br>
     <button type="submit">Zagraj</button>
     {% if error %}

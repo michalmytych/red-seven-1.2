@@ -99,3 +99,6 @@ class Game:
     def get_player_by_id(self, _id):
         return [p for p in self.players if p.id == _id][0]
 
+    @property
+    def current_player(self):
+        return self.players[self.player_counter]

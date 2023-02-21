@@ -26,3 +26,6 @@ class Player:
             self.set_card_to_palette(int(turn.to_palette) - 1)
             self.hand.sort()
 
+    def __eq__(self, other):
+        return self.id == other.id
+

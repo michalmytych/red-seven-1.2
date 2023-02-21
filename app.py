@@ -65,10 +65,14 @@ def init():
 
 @app.route('/table', methods=['GET'])
 def play():
-    game_id = session.get('game')
-    nickname = session.get('nickname')
-    game = games.get(game_id)
-    player = game.get_player_by_id(nickname)
+    try:
+        game_id = session.get('game')
+        nickname = session.get('nickname')
+        game = games.get(game_id)
+        player = game.get_player_by_id(nickname)
+    except Exception:
+        message = '403 Odmowa dostępu'
+        return render_template('error.html', error=message)
 
     return render_template('table.html', game=game, player=player)
 
