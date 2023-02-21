@@ -3,17 +3,7 @@
   {% include 'loader.html' %}
 </div>
 
-<script>
-  const refreshRate = 2000;
-
-  window.onload = () => {
-    const interval = setInterval(() => window.location.reload(), refreshRate);
-
-    window.onbeforeunload = () => {
-      clearInterval(interval);
-    }
-  }
-</script>
+{% include 'refresh.html' %}
 
 <style>
   .centered {

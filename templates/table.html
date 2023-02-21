@@ -1,12 +1,15 @@
-<code style="width: 100%; height: 5rem; font-size: 0.8rem; color: white; background-color: black;">
-  Sesja [nickname]: {{ session.get('nickname') }}
-  <br>
-  Sesja [game]: {{ session.get('game') }}
-  <br>
-  player[id]: {{ player.id }}
-  <br>
-  game.current_player[id]: {{ game.current_player.id }}
-</code><br>
+<details>
+  <summary>DEBUG BAR</summary>
+  <code style="width: 100%; height: 5rem; font-size: 0.8rem; color: white; background-color: black;">
+    Sesja [nickname]: {{ session.get('nickname') }}
+    <br>
+    Sesja [game]: {{ session.get('game') }}
+    <br>
+    player[id]: {{ player.id }}
+    <br>
+    game.current_player[id]: {{ game.current_player.id }}
+  </code><br>
+</details>
 
 {% for _player in game.players %}
 
@@ -32,8 +35,7 @@
     {% for card in _player.palette.cards %}
       <div
         class="card"
-        style="border-color: {{ card.css_color }};
-          color: {{ card.css_color }};"
+        style="border-color: {{ card.css_color }};"
       >
         {{ card.value }}
       </div>
@@ -50,7 +52,12 @@
 >
   {{ game.canvas.card.value }}
 </div>
+<p>{{ game.canvas.current_rule }}</p>
 
+<h3>Twoja tura</h3>
+{% if player == game.current_player %}
+  {% include 'turn_form.html' %}
+{% endif %}
 
 <style>
   .cardsContainer {
@@ -71,3 +78,7 @@
     border-color: gray;
   }
 </style>
+
+{% if player != game.current_player %}
+  {% include 'refresh.html' %}
+{% endif %}

@@ -1,7 +1,7 @@
 from flask import Flask, redirect
 from flask import render_template
 from flask import session
-from flask import request
+from flask import request, jsonify
 
 from core.game import Status as GameStatus
 from core.config import PLAYERS_LIMIT
@@ -75,6 +75,14 @@ def play():
         return render_template('error.html', error=message)
 
     return render_template('table.html', game=game, player=player)
+
+
+@app.route('/play-turn', methods=['POST'])
+def play_turn():
+    return jsonify({
+      'to_palette': request.form.get('to_palette'),
+      'to_canvas': request.form.get('to_canvas')
+    })
 
 
 if __name__ == '__main__':

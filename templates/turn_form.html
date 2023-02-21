@@ -1,0 +1,9 @@
+<form method="POST" action="{{ url_for('play_turn') }}">
+  <input type="text" placeholder="Numer karty do tła" name="to_canvas">
+  <br>
+  <input type="text" placeholder="Numer karty do palety" name="to_palette">
+  <br>
+  <small>Jeśli nie wybierzesz żadnej karty, spasujesz i przegrasz.</small>
+  <br>
+  <button type="submit">Zagraj</button>
+</form>
