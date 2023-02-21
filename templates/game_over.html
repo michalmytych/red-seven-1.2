@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="centered">
+    {% if game.winner == player.id %}
+      <h1>Wygrałeś</h1>
+    {% else %}
+      <h1>Przegrałeś</h1>
+    {% endif %}
+
+    <a href="{{ url_for('home') }}">Powrót do strony głównej</a>
+  </div>
+{% endblock %}

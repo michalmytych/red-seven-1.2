@@ -1,4 +1,7 @@
-<div class="centered">
+{% extends "base.html" %}
+
+{% block content %}
+<div class="centered mt-xl">
   <h3>Oczekiwanie na rozgrywkę w [{{ session['game'] }}]</h3>
   {% include 'loader.html' %}
 </div>
@@ -11,3 +14,9 @@
     margin: 0 auto;
   }
 </style>
+{% endblock %}
+
+{% block scripts %}
+  {% include 'refresh.html' %}
+{% endblock %}
+

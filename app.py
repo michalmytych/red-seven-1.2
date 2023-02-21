@@ -1,11 +1,12 @@
 from flask import Flask, redirect
 from flask import render_template
 from flask import session
-from flask import request, jsonify
+from flask import request
 
 from core.game import Status as GameStatus
 from core.config import PLAYERS_LIMIT
 from core.game import Game
+from core.turn import Turn
 
 app = Flask(__name__)
 app.secret_key = 'fde9f55f-f255-420e-95fa-fa4bb6a41064'
@@ -74,15 +75,39 @@ def play():
         message = '403 Odmowa dostępu'
         return render_template('error.html', error=message)
 
+    if game.winner:
+        return redirect('/game-over')
+
     return render_template('table.html', game=game, player=player)
 
 
 @app.route('/play-turn', methods=['POST'])
 def play_turn():
-    return jsonify({
-      'to_palette': request.form.get('to_palette'),
-      'to_canvas': request.form.get('to_canvas')
-    })
+    game_id = session.get('game')
+    game = games.get(game_id)
+
+    to_palette = request.form.get('to_palette')
+    to_canvas = request.form.get('to_canvas')
+
+    turn = Turn(
+      session['nickname'],
+      int(to_palette) if to_palette is not '' else None,
+      int(to_canvas) if to_canvas is not '' else None
+    )
+
+    game.run_turn(turn)
+
+    return redirect('/table')
+
+
+@app.route('/game-over', methods=['GET'])
+def game_over():
+    game_id = session.get('game')
+    nickname = session.get('nickname')
+    game = games.get(game_id)
+    player = game.get_player_by_id(nickname)
+
+    return render_template('game_over.html', game=game, player=player)
 
 
 if __name__ == '__main__':

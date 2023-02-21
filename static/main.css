@@ -1,0 +1,94 @@
+@font-face {
+    font-family: Lato;
+    src: url('Lato-Regular.ttf');
+}
+
+@font-face {
+    font-family: LatoBold;
+    src: url('Lato-Bold.ttf');
+}
+
+@font-face {
+    font-family: LatoItalic;
+    src: url('Lato-Italic.ttf');
+}
+
+@font-face {
+    font-family: LatoLight;
+    src: url('Lato-Light.ttf');
+}
+
+body {
+  background-color: #173f17;
+  color: white;
+  font-family: Lato, sans-serif;
+}
+
+.mt-xl {
+  margin-top: 5rem;
+}
+
+input, button {
+  padding: 3px;
+  width: 12rem;
+  border-radius: 3px;
+  background-color: #563f33;
+  border: 2px solid #64544b;
+  color: #e0b59c;
+}
+
+button {
+  width: 5rem;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+button:hover {
+  width: 5rem;
+  background-color: #64544b;
+}
+
+h1, h2, h3, h4, h5, strong {
+  font-family: LatoBold, sans-serif;
+}
+
+button:active {
+  transition: 0s;
+  width: 5rem;
+  background-color: #3f2a25;
+}
+
+.centered {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.error {
+  color: #951b1b;
+}
+
+.ipt {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.cardsContainer {
+  display: flex;
+}
+
+.card, .hiddenCard {
+  width: fit-content;
+  border-radius: 4px;
+  border: solid 5px;
+  font-size: 1.1rem;
+  margin: 5px;
+  background-color: white;
+  color: black;
+  font-family: LatoBold, sans-serif;
+}
+
+.hiddenCard {
+  background-color: gray;
+  color: gray;
+  border-color: gray;
+}

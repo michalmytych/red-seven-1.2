@@ -1,10 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
 <div class="centered">
   <h1>Wejdź do gry!</h1>
   <hr>
   <form class="fm" method="POST" action="{{ url_for('home') }}">
-    <input class="ipt" name="game" type="text" required placeholder="Gra" minlength="5" value="ruska">
+    <input class="ipt" name="game" type="text" required placeholder="Nazwa gry" minlength="5">
     <br>
-    <input class="ipt" name="nickname" type="text" required placeholder="Nickname" minlength="5" value="stefanBatory">
+    <input class="ipt" name="nickname" type="text" required placeholder="Nickname" minlength="5">
     <br>
     <button type="submit">Zagraj</button>
     {% if error %}
@@ -12,19 +15,5 @@
     {% endif %}
   </form>
 </div>
+{% endblock %}
 
-<style>
-  .centered {
-    text-align: center;
-    margin: 0 auto;
-  }
-
-  .error {
-    color: #951b1b;
-  }
-
-  .ipt {
-    display: inline-block;
-    margin-bottom: 0.5rem;
-  }
-</style>

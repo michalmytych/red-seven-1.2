@@ -2,11 +2,11 @@ class Card:
     DICT_OF_COLORS = {
       6: 'red',
       5: 'orange',
-      4: 'golden',
+      4: 'gold',
       3: 'green',
       2: 'lightblue',
       1: 'navy',
-      0: 'violet'
+      0: 'blueviolet'
     }
     LIST_OF_VALUES = [1, 2, 3, 4, 5, 6, 7]
 
