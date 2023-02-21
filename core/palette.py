@@ -3,7 +3,6 @@ from core.card import Card
 
 
 class Palette:
-
     def __init__(self):
         self.cards = []
 

@@ -7,7 +7,7 @@ from core.turn import Turn
 
 class Game:
     def __init__(self, players_ids):
-        self.players = [Player(_id) for _id in range(players_ids)]
+        self.players = [Player(_id) for _id in players_ids]
         self.deck = Deck()
         self.canvas = Canvas()
         self.player_counter = 0
@@ -46,25 +46,36 @@ class Game:
             raise IllegalPlayerActionException
 
     def run_turn(self, turn: Turn):
+        # Pobierz referencję do aktualnego gracza
         current_player = self.players[self.player_counter]
 
+        # Sprawdź czy zagranie pochodzi od aktualnego gracza
         self.validate_turn(turn, current_player)
 
+        # Sprawdź czy gracz ma karty, jeśli nie - dezaktywuj go
         if len(current_player.hand.cards) < 1:
             current_player.active = False
 
+        # Wykonaj zagrania gracza jeśli jest aktywny
         if current_player.active:
             current_player.play_turn(turn, self.canvas)
 
+        # Jeśli po zagraniu gracz nie wygrał - dezaktywuj go
         if self.get_winner_index() != self.player_counter:
             current_player.active = False
 
+        # Znajdź zwycięzcę jeśli istnieje
         _winner = self.get_winner_if_exists()
         if _winner:
             self.winner = _winner
+            return _winner
 
+        # Ustaw następnego gracza jako zagrywającego
         self.player_counter += 1
         self.adjust_player_counter()
+
+        # Jeśli nie ma zwycięzcy, zwróć None
+        return None
 
     def prepare_round(self):
         self.deal_cards()
