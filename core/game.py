@@ -95,3 +95,7 @@ class Game:
 
         # Jeśli nie ma zwycięzcy, zwróć None
         return None
+
+    def get_player_by_id(self, _id):
+        return [p for p in self.players if p.id == _id][0]
+

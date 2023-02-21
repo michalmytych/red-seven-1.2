@@ -40,13 +40,13 @@ def home():
 @app.route('/wait', methods=['GET'])
 def wait():
     game_id = session.get('game')
-    _game = games.get(game_id)
+    game = games.get(game_id)
 
-    if type(_game) is Game:
+    if type(game) is Game:
         return redirect('/init')
 
-    if _game and len(_game) == PLAYERS_LIMIT:
-        games[game_id] = Game(_game)
+    if game and len(game) == PLAYERS_LIMIT:
+        games[game_id] = Game(game)
         return redirect('/init')
 
     return render_template('wait.html')
@@ -60,12 +60,17 @@ def init():
     if GameStatus.ROUND_PREPARED not in _game.statuses:
         _game.prepare_round()
 
-    return redirect('/play')
+    return redirect('/table')
 
 
-@app.route('/play', methods=['GET'])
+@app.route('/table', methods=['GET'])
 def play():
-    return f'Rozgrywka w P{session["game"]}'
+    game_id = session.get('game')
+    nickname = session.get('nickname')
+    game = games.get(game_id)
+    player = game.get_player_by_id(nickname)
+
+    return render_template('table.html', game=game, player=player)
 
 
 if __name__ == '__main__':

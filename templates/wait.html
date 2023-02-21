@@ -1,4 +1,7 @@
-<h3>Oczekiwanie na rozgrywkę w {{ session['game'] }}</h3>
+<div class="centered">
+  <h3>Oczekiwanie na rozgrywkę w [{{ session['game'] }}]</h3>
+  {% include 'loader.html' %}
+</div>
 
 <script>
   const refreshRate = 2000;
@@ -12,4 +15,9 @@
   }
 </script>
 
-
+<style>
+  .centered {
+    text-align: center;
+    margin: 0 auto;
+  }
+</style>
