@@ -14,6 +14,11 @@
 {#  </code><br>#}
 {#</details>#}
 
+  <details>
+  <summary>Instrukcja</summary>
+    <img src="{{ url_for('static', filename='manual.jpg') }}" alt="Manual">
+  </details>
+
 {% for _player in game.players %}
 
   {% if _player == player %}
